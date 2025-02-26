@@ -1,0 +1,28 @@
+# Install and load the raster package
+install.packages("raster")
+library(raster)
+
+# Set the working directory to the folder containing your .tif files
+input_folder <- "~/Documents/PhD/mccart/input/wc2.1_2.5m_bio"
+output_folder <- "~/Documents/PhD/mccart/input"
+
+# List all .tif files in the input folder
+tif_files <- list.files(path = input_folder, pattern = "\\.tif$", full.names = TRUE)
+
+# Loop through each .tif file
+for (tif_file in tif_files) {
+  # Extract the base name of the file (without extension)
+  file_name <- tools::file_path_sans_ext(basename(tif_file))
+  
+  # Define the output file path
+  output_file <- file.path(output_folder, paste0(file_name, ".asc"))
+  
+  # Load the .tif file
+  raster_file <- raster(tif_file)
+  
+  # Write the raster to an ASCII file
+  writeRaster(raster_file, filename = output_file, format = "ascii")
+  
+  # Print a message to indicate progress
+  cat("Converted:", tif_file, "to", output_file, "\n")
+}
