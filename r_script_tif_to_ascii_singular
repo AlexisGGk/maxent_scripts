@@ -1,0 +1,21 @@
+# script to convert tif to ascii format so that it is useable by maxent 
+# Here I use the global land cover database https://maps.elie.ucl.ac.be/CCI/viewer/download.php 
+
+# By Alexis Gkantiragas 
+# 28th Feb 2025 
+
+# Made with the help of deepseek for initial drafting which was then edited 
+
+
+# Install and load the raster package
+install.packages("raster")
+library(raster)
+
+# check the file exists 
+file.exists("~/Downloads/scratch/ESACCI-LC-L4-LCCS-Map-300m-P1Y-1992_2015-v2.0.7.tif")
+
+# Load the .tif file
+raster_file <- raster("~/Downloads/scratch/ESACCI-LC-L4-LCCS-Map-300m-P1Y-1992_2015-v2.0.7.tif")
+
+# Write the raster to an ASCII file
+writeRaster(raster_file, filename = "land_cover.asc", format = "ascii")
