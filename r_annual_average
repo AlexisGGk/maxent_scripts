@@ -1,0 +1,39 @@
+### This code allows you to take annual averages for tiff files.
+### Here we will use it for the worldclim solar data 
+### https://www.worldclim.org/data/worldclim21.html 
+
+### Note that I used Deepseek to draft the initial version of this code
+### I then modified it, added more comments and checked its functionality 
+
+### By Alexis Gkantiragas 
+### Tuesday 4th March 2025 
+
+
+# Load the terra package
+library(terra)
+
+# Specify the folder containing your TIFF files
+# There should be nothing but TIFF files in this folder! 
+folder_path <- "~/Downloads/wc2.1_2.5m_srad"
+
+# List all .tif files in the folder
+# Note that you need to print it seperately if you 
+# want it to display the names in the console
+file_paths <- list.files(folder_path, pattern = "\\.tif$", full.names = TRUE)
+
+# Load all monthly TIFF files into a SpatRaster object
+monthly_rasters <- lapply(file_paths, rast)
+
+# Stack the rasters into a single SpatRaster object
+stacked_rasters <- do.call(c, monthly_rasters)
+
+# Calculate the mean across the layers
+mean_raster <- app(stacked_rasters, fun = mean)
+
+# Save the mean raster as a new TIFF file
+# Note that the file can look a little funky 
+# You need to zoom in to see details (at least on mac)
+writeRaster(mean_raster, "~/Documents/PhD/mccart/input/solar_mean.tif", overwrite = TRUE)
+
+# Plot the mean raster
+plot(mean_raster, main = "Mean Solar Radiation")
