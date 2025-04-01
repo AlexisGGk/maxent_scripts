@@ -1,0 +1,47 @@
+### Script to add a bounding box to restrict the area of maxent predictions ### 
+
+### By Alexis Gkantiragas ###
+
+### Please note that Deepseek was used to generate initial drafts of the code ### 
+
+# Here we modify an environmental layer from the worldclim dataset 
+# Here we remove sub saharan africa because for this particular prediction 
+# The host of the infectious agent of interest is not found there 
+
+library(sf)
+library(terra)
+library(tidyterra)  # Converts rasters for ggplot
+library(ggplot2)
+
+# Example: Approximate bounding box for Sub-Saharan Africa (adjust as needed)
+ssa_bbox <- st_bbox(
+  c(xmin = -20, xmax = 55, ymin = -35, ymax = 20),  # Rough bounds
+  crs = 4326  # WGS84
+) |> 
+  st_as_sfc()
+
+# Convert to SpatVector (for terra)
+ssa_mask <- vect(ssa_bbox)
+
+original_raster <- rast("~/Downloads/wc2.1_10m_tmin/wc2.1_10m_tmin_01.tif")  # e.g., logistic output
+
+plot(original_raster, main = "original raster")
+
+print(prediction_raster)
+
+# Set SSA region to NA (exclude)
+excluded_raster <- mask(
+  original_raster,
+  ssa_mask,
+  inverse = TRUE, 
+  overwrite = TRUE # Exclude SSA instead of keeping it
+)
+
+# Save the restricted prediction
+writeRaster(
+  excluded_raster, 
+  "maxent_prediction_no_SSA.tif", 
+  overwrite = TRUE  # Critical to overwrite existing file
+)
+
+plot(excluded_raster, main = "original raster")
