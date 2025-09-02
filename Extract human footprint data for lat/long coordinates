@@ -1,0 +1,42 @@
+### Script: Extract human footprint data for lat/long coordinates
+### Author: Alexis Gkantiragas
+### Date: 2025-09-02
+### Language: R
+### Description: use this to extract 
+
+# loads required libraries 
+library(raster)
+library(sf)
+
+# NOTE - to run this you need to first download the human footprint dataset [1] 
+# the code works best if it is in decimal lat/long. it will still work but will return a warning otherwise
+
+
+compiled_dataset <- read.csv("INSERT_PATH")
+
+# Convert your site coordinates to sf object
+sites_sf <- st_as_sf(compiled_dataset, coords = c("Long", "Lat"), crs = 4326)
+
+# Load a raster (example: population density)
+hfp_raster <- raster("INSERT_PATH/HFP2009.tif")  
+pop_raster <- raster("INSERT_PATH/Popdensity2010.tif")  
+waterways_raster <- raster("INSERT_PATH/NavWater2009.tif")
+croplands_raster <- raster("INSERT_PATH/croplands2005.tif")
+built_raster <- raster("INSERT_PATH/Built2009.tif")
+
+# Extract values at site locations
+compiled_dataset$pop_density <- raster::extract(pop_raster, sites_sf)
+compiled_dataset$hfp <- raster::extract(hfp_raster, sites_sf)
+compiled_dataset$waterways <- raster::extract(waterways_raster, sites_sf)
+compiled_dataset$croplands <- raster::extract(croplands_raster, sites_sf)
+compiled_dataset$built <- raster::extract(built_raster, sites_sf)
+
+# Save the resulting dataset as a .csv
+write.csv(compiled_dataset, "INSERT_PATH", row.names = FALSE)
+
+
+### References 
+[1] 10.1038/sdata.2016.67 
+
+
+
