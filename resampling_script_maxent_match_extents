@@ -1,0 +1,43 @@
+
+
+# script to resample globcover so that it matches bioclim 1km 30s res # 
+
+# Load required libraries 
+library(terra)
+
+# Load in rasters
+land_use_raster <- rast("~/Downloads/Globcover2009_V2.3_Global_/GLOBCOVER_L4_200901_200912_V2.3.tif")
+bioclim_raster <- rast("/Volumes/Extreme Pro/30s_ascii_tiff/ascii/annual_mean_temp.asc")
+
+# check CRS
+crs(land_use_raster)
+crs(bioclim_raster)
+
+# reproject + resample land use raster to match bioclim raster
+land_use_resampled <- project(land_use_raster, bioclim_raster, method = "near")
+
+# check if CRS matches
+crs(land_use_resampled) == crs(bioclim_raster)
+
+# check if resolution matches
+res(land_use_resampled) == res(bioclim_raster)
+
+# check if extent matches
+ext(land_use_resampled) == ext(bioclim_raster)
+
+# check if number of rows/columns matches
+ncol(land_use_resampled) == ncol(bioclim_raster)
+nrow(land_use_resampled) == nrow(bioclim_raster)
+
+# If all good save resulting raster 
+writeRaster(land_use_resampled, 
+            "/Volumes/Extreme Pro/30s_ascii_tiff/land_use_resampled.tif",
+            datatype = "INT2S",
+            overwrite = TRUE)
+
+# saves session info 
+sessionInfo()
+
+# Auto-fill R version and date
+cat("Script finished on:", Sys.Date(), "\n")
+cat("R version:", R.version.string, "\n")
