@@ -11,6 +11,9 @@
 # You have to pre-download them for this script to work 
 # And change the location 
 
+# Load required libraries 
+library(terra)
+
 # Load the stacked raster
 bio <- rast("~/Documents/PhD/climate_scenarios/2050/ssp126/wc2.1_2.5m_bioc_IPSL-CM6A-LR_ssp126_2041-2060.tif")
 
