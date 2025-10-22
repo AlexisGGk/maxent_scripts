@@ -1,0 +1,29 @@
+### Script: unstack rasters 
+### Author: Alexis Gkantiragas
+### Date: 2025-10-22
+### Language: R
+### Description: Script to unstack bioclim rasters
+
+# CMIP6 rasters are given as stacks by Worldclim 
+# This script is how to unstack them into seperate files 
+# https://www.worldclim.org/data/cmip6/cmip6climate.html
+
+# You have to pre-download them for this script to work 
+# And change the location 
+
+# Load the stacked raster
+bio <- rast("~/Documents/PhD/climate_scenarios/2050/ssp126/wc2.1_2.5m_bioc_IPSL-CM6A-LR_ssp126_2041-2060.tif")
+
+# Create output directory
+out_dir <- "~/Documents/PhD/climate_scenarios/2050/ssp126/bands/"
+dir.create(out_dir, showWarnings = FALSE)
+
+# Loop through bands and write each one
+for (i in 1:nlyr(bio)) {
+  band <- bio[[i]]                       # extract single band
+  layer_name <- names(band)              # get layer name (from the original raster)
+  writeRaster(band, paste0(out_dir, layer_name, ".tif"), overwrite = TRUE)
+}
+
+# Print session info 
+sessionInfo()
